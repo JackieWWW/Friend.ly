@@ -12,7 +12,7 @@ const Main = (props) => (
   <div style={{height:'100%'}}>
     <Switch>
       <Route exact path="/" render={() => {
-        return props.isLogin? <Dashboard userInfo={props.userInfo}/> 
+        return props.isLogin? <Dashboard userInfo={props.userData}/> 
         : <Homepage />
         }
       }/>
