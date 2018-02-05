@@ -11,7 +11,7 @@ class Dashboard extends React.Component {
     this.state = {
       username: this.props.username,
       events : [{roomName: 'Loading...'}],
-      select_event_id: 0,
+      select_event_id: 3,
       currentRoom: 0,
       roomName: 'asd'
     }

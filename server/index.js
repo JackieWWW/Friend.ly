@@ -132,15 +132,33 @@ app.get('/profile/events', (req, res) => {
   })
   // res.end()
 })
-
-app.get('/events', (req, res) => {
-  let term = req.query.term
+ /////////////// SEARCH COMPONENT REQUEST /////////////////////////
+app.get('/search/events', (req, res) => {
+  const term = req.query.term
   db.Events.findAll({where: {eventName: {
   	[db.Op.iLike]: '%' + term + '%'
   }}}).then((events) => {
     res.send(events)
   })
 })
+
+	app.post('/events/addAttendee', (req, res) => {
+		const eventID = req.query.eventID;
+		const userID = req.query.userID;
+		db.Events.findOne({where: {eventID: eventID}}).then(event => {
+			// add attendee to the event
+			event.update().then()
+			res.send(event)
+		})
+	})
+
+	app.post('/users/addEvent', (req, res) => {
+
+	})
+
+post('/events/addAttendee', {eventID: eventID, attendees: userID})
+post('/users/addEvent', {userID: userID, eventID: event.eventID})
+///////////////////////////////////////////////////////////////////
 
 app.use('/*', express.static(__dirname + '/../client/dist'));
 
