@@ -97,19 +97,20 @@ class Search extends React.Component {
     if(this.state.selectedOption !== 'date') {
       params = {term: this.state.term, searchBy: this.state.selectedOption};
     } else {
-      params = {startDate: this.state.startDate, endDate: this.state.endDate, searchBy: 'date'};
+      params = {startDate: this.reformatDate(this.state.startDate), endDate: this.reformatDate(this.state.endDate), searchBy: 'date'};
     }
     axios.get('/search/events', {params: params})
     .then((response) => {
       this.setState({events: response.data}, () => {
         this.sortBy();
+        console.log('date format from server: ', events[0].startDate)
       })
     }) 
   }
 
   reformatDate (str) {
     const date = new Date(str);
-    return (date.getMonth()+1) + '-' + date.getDate() + '-' + date.getFullYear() ;
+    return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
   }
 
   sortBy (e) {

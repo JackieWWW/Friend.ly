@@ -275,10 +275,12 @@ router.post('/createEvent', (req, res) => {
 	let endDate = req.body.endDate;
 	let imgLink = "http://winthehumanrace.ca/wp-content/uploads/2014/04/Pink-event.jpg";
 	let locationName = req.body.location
+	console.log('test: I am in createEvent now!')
 	db.Users.findOne({where: {userID: creatorID}}).then(user => {
 		const creatorName = user.username;
 		db.Events.findCreateFind({where: {imgLink: imgLink, startDate: startDate, endDate: endDate, eventName: eventName, capacity: capacity, eventDesc: eventDesc, category: category, creatorID: creatorID, creatorName: creatorName}}).spread((event, created) => {
 			db.UserEvents.findCreateFind({where: {userID: creatorID, eventID: event.dataValues.eventID}}).spread((userevent, created) => {
+				console.log('I\'ve successfully create an event!')
 				res.send(userevent.dataValues)
 			})
 		})
@@ -321,23 +323,37 @@ router.get('/search/events', (req, res) => {
 	    res.send(events)
 	  })
 	} else if (searchBy === 'date'){
-		const startDate = req.query.startDate;
-    const endDate = req.query.endDate;
 		console.log('in date search')
-		console.log('startDate type from client', typeof startDate, ' endDate ', endDate);
-		// db.Events.findAll({where: {[db.Op.or]: [{startDate: {
-		// 	[db.Op.lte]: endDate
-		// }}, {endDate: {
-		// 	[db.Op.gte]: startDate
-		// }}]}}).then((events) => {
-		// 	console.log('getvent by date============', events);
-	 //    res.send(events)
-	 //  })
-	 db.Events.findAll({where: {startDate : startDate}}).then(events => res.send(events))
+		var startDate = req.query.startDate;
+    var endDate = req.query.endDate;
+
+    console.log('startDate from client', startDate, ' endDate ', endDate);
+		const where = {
+	    [db.Op.or]: [
+	    	{startDate: {
+	       [db.Op.between]: [startDate, endDate]
+	    	}},
+	    	{endDate: {
+	    		[db.Op.between]: [startDate, endDate]
+	    	}
+	    }]
+	  };
+
+	  db.Events.findAll({where: where}).then((events) => console.log('success'))
+
+    // db.Events.findAll({where: {[db.Op.or]: [{startDate: {
+    //  [db.Op.lte]: endDate
+    // }}, {endDate: {
+    //  [db.Op.gte]: startDate
+    // }}]}}).then((events) => {
+    //  console.log('getvent by date============', events);
+   //    res.send(events)
+   //  })
+
 	} else {
 		console.log('in all search')
 		db.Events.findAll({where: {status: 'active'}}).then(events => {
-			console.log('sdate type in server: ', typeof events[0].startDate);
+			console.log('date in server=======: ', typeof events[0].startDate, '==========', events[0].startDate);
 			res.send(events)
 		})
 	}

@@ -77,7 +77,10 @@ class CreateEvent extends React.Component{
     this.state = {
       submittedValues: {},
       locale: '',
-      location: ''
+      location: '',
+      startDate: null,
+      endDate: null,
+      focusedInput: null
     }
     this.handleLocationChange = this.handleLocationChange.bind(this);
     this.setLocale = this.setLocale.bind(this);
@@ -93,6 +96,11 @@ class CreateEvent extends React.Component{
     this.setState({
       locale: locale
     })
+  }
+
+  reformatDate (str) {
+    const date = new Date(str);
+    return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
   }
 
     // errorValidator( values ){
@@ -184,14 +192,19 @@ class CreateEvent extends React.Component{
       // validateWarning={this.warningValidator}
       // validateSuccess={this.successValidator}
 
-            onSubmit={submittedValues => this.setState({submittedValues: submittedValues}, () => {axios.post('/createEvent', {
+            onSubmit={submittedValues => this.setState({submittedValues: submittedValues}, 
+              () => {
+              const startDate = this.reformatDate(this.state.startDate);
+              const endDate = this.reformateDate(this.state.endDate);
+              console.log(starDate, '===createEvent====', endDate)
+              axios.post('/createEvent', {
               eventName: this.state.submittedValues.eventName,
               eventDesc: this.state.submittedValues.eventDesc,
               capacity: this.state.submittedValues.capacity,
               category: this.state.submittedValues.category,
               creatorID: this.props.userID,
-              startDate: this.state.startDate,
-              endDate: this.state.endDate,
+              startDate: startDate,
+              endDate: endDate,
               location: this.state.locale
               })})
             .then((response) => {console.log('hi')})}>
@@ -216,6 +229,7 @@ class CreateEvent extends React.Component{
                   onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
                 />
                 <br/>
+
                 <button type="submit" className="mb-4 btn btn-primary">Submit</button>
               </form>
             )}
